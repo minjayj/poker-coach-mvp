@@ -1,0 +1,12 @@
+__pycache__/
+.pytest_cache/
+.venv/
+*.pyc
+data/*.json
+data/players/*.json
+data/play/
+data/solver_study/
+data/research/
+!data/.gitkeep
+!data/players/.gitkeep
+data/*.sqlite3

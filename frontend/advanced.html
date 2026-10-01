@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Poker Coach · Session setup</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <link rel="stylesheet" href="/static/advanced-theme.css" />
+    <script>if (new URLSearchParams(location.search).has("embed")) document.documentElement.classList.add("embedded-setup");</script>
+    <script defer src="/static/app.js"></script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="masthead">
+        <div>
+          <p class="eyebrow">Local-first · consent-based home games</p>
+          <h1>Poker Coach</h1>
+          <p class="subtle">A live hand workspace with on-demand, explanation-first coaching.</p>
+        </div>
+        <div class="advanced-header-actions"><a class="live-return" href="/play">Review plays</a><a class="live-return" href="/">← Live coach</a><div class="status-pill" id="socketStatus">Connecting…</div></div>
+      </header>
+
+      <section class="summary-grid">
+        <article class="summary-card"><span class="label">Pot</span><strong id="potValue">$0</strong></article>
+        <article class="summary-card"><span class="label">Street</span><strong id="streetValue">Preflop</strong></article>
+        <article class="summary-card"><span class="label">Current Action</span><strong id="currentActionValue">Waiting</strong></article>
+        <article class="summary-card"><span class="label">Players in Hand</span><strong id="playersInHandValue">0</strong></article>
+      </section>
+
+      <section class="panel" id="formatPanel">
+        <div class="panel-head"><h2>Game Format</h2><span class="signal" id="formatStatus">Cash game</span></div>
+        <div class="inline-form">
+          <label>Type<select id="gameFormatInput"><option value="cash">Cash game</option><option value="tournament">Tournament</option></select></label>
+          <label>Game<select id="gameVariantInput"><option value="nlh">Texas Hold'em (NLH)</option><option value="plo5">Five-card Omaha (PLO5)</option></select></label>
+        </div>
+        <p class="subtle">Window capture checks the table felt for NLH or PLO5. Confirm this setting before coaching; a desktop with multiple tables cannot be identified safely.</p>
+        <div id="cashFields" class="inline-form format-fields">
+          <label>Rake %<input type="number" id="rakePercentInput" min="0" max="100" step="0.1" value="0" /></label>
+          <label>Rake Cap<input type="number" id="rakeCapInput" min="0" step="0.5" placeholder="No cap if blank" /></label>
+          <label class="checkbox-label"><input type="checkbox" id="noFlopNoDropInput" checked />No flop, no drop</label>
+        </div>
+        <div id="tournamentFields" hidden>
+          <div class="inline-form">
+            <label>Players Remaining<input type="number" id="playersRemainingInput" min="2" step="1" placeholder="Entire tournament" /></label>
+            <label>Paid Places<input type="number" id="paidPlacesInput" min="1" step="1" placeholder="e.g. 3" /></label>
+            <label>Ante<input type="number" id="anteInput" min="0" step="0.5" value="0" /></label>
+            <label>Final Table Size<input type="number" id="finalTableSizeInput" min="2" max="9" step="1" value="9" /></label>
+            <label class="wide-field">Prizes by Finish<input type="text" id="payoutsInput" placeholder="e.g. 100, 60, 40" /></label>
+          </div>
+          <p class="subtle">For prize equity, enter every paid prize and every remaining player’s current stack in Seat Setup. A satellite can use equal ticket values, such as 200, 200.</p>
+        </div>
+        <button type="button" id="saveFormatButton">Save Game Format</button>
+      </section>
+
+      <section class="panel compact-context">
+        <span class="label">Decision Context</span>
+        <strong id="decisionContextValue">Set seats and actions to calculate Hero’s legal options.</strong>
+      </section>
+
+      <section class="live-grid">
+        <article class="panel video-panel">
+          <div class="panel-head"><h2>Live Table Capture</h2><span class="signal" id="inputStatus">No source</span></div>
+          <div class="video-stage">
+            <video id="liveVideo" autoplay muted playsinline></video>
+            <img id="remoteFramePreview" alt="Latest external input frame" />
+            <div class="video-empty" id="videoEmpty">Share the ClubGG application window, use a camera, or connect a future local vision adapter.</div>
+          </div>
+          <canvas id="captureCanvas" hidden></canvas>
+          <div class="button-row">
+            <button type="button" id="startCameraButton">Use Camera</button>
+            <button type="button" class="ghost-button" id="shareScreenButton">Share ClubGG Window</button>
+            <button type="button" class="ghost-button" id="stopInputButton">Stop Input</button>
+          </div>
+          <p class="subtle" id="captureGuide">Select the ClubGG <strong>window</strong> in the picker. Capture is local and never controls the table app. To save video for post-game review, use Start local recording on the focused Live coach page.</p>
+        </article>
+
+        <article class="panel coach-panel">
+          <div class="panel-head"><h2>Coach’s Notes</h2><button type="button" class="ghost-button" id="speakCoachButton">Read Aloud</button></div>
+          <p class="coach-headline" id="coachHeadline">Set the hand context, then request coaching when you want a breakdown.</p>
+          <div class="coach-section"><span class="label">What I’m seeing</span><ul id="coachSee"><li>Waiting for hand information.</li></ul></div>
+          <div class="coach-section"><span class="label">Why this matters</span><ul id="coachWhy"><li>Coaching stays on-demand so you can focus on learning the spot.</li></ul></div>
+          <div class="coach-section"><span class="label">Watch out for</span><ul id="coachWatch"><li>Verify detected information before using it.</li></ul></div>
+          <p class="coach-rep" id="coachRep">Practice naming the pot, price, board, and opponent tendency before choosing a line.</p>
+        </article>
+      </section>
+
+      <section class="panel" id="messagePanel"><div class="panel-head"><h2>Live Status</h2></div><p id="messageText" class="subtle">Loading state…</p></section>
+
+      <section class="panel" id="reviewPanel">
+        <div class="panel-head"><h2>Vision Review Queue</h2><span class="subtle">Only low-confidence detections appear here.</span></div>
+        <div class="action-log" id="reviewList"><p class="subtle">No items need review.</p></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2>Request Coaching</h2><span class="subtle">Nothing is analyzed until you click the button.</span></div>
+        <div class="inline-form">
+          <label>Opponent<select id="coachOpponent"></select></label>
+          <label>Amount to Call<input type="number" id="coachToCall" min="0" step="0.5" placeholder="Auto from action" /></label>
+          <label>Raise To (optional)<input type="number" id="coachRaiseTo" min="0" step="0.5" /></label>
+        </div>
+        <button type="button" id="requestCoachButton">Coach Me Through This Spot</button>
+      </section>
+
+      <section class="panel" id="openStudyPanel">
+        <div class="panel-head"><h2>Open Solver Study</h2><span class="signal">Post-hand only</span></div>
+        <p class="subtle">MIT-licensed, approximate heads-up Hold'em push/fold data. It applies only at the exact listed stack depths with no ante or rake; it does not power live coaching, PLO5/PLO6, multiway play, or tournament ICM.</p>
+        <div class="inline-form">
+          <label>Hero Cards<input type="text" id="studyHeroCards" placeholder="Ah, Kh" /></label>
+          <label>Effective Stack<select id="studyStackBb"></select></label>
+          <label>Decision<select id="studyDecision"><option value="sb_first">Small blind: shove or fold</option><option value="bb_vs_shove">Big blind: call or fold vs shove</option></select></label>
+        </div>
+        <button type="button" id="lookupStudyButton">Look Up Study Spot</button>
+        <div class="study-result subtle" id="studyResult" aria-live="polite">Enter two cards to inspect an open-data study spot after the hand.</div>
+        <p class="subtle">Source, assumptions, quality, and model error are shown with every result. <a href="https://github.com/davidvayn/pokersolver" target="_blank" rel="noopener noreferrer">Source project</a></p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2>Cards & Hand Context</h2><button type="button" class="ghost-button" id="refreshVisionButton">Check Local Camera</button></div>
+        <div class="inline-form">
+          <label>Hero Cards<input type="text" id="heroCardsInput" placeholder="NLH: Ah, Kh · PLO5: five cards" /></label>
+          <label>Board Cards<input type="text" id="boardCardsInput" placeholder="Qs, Jd, 3c" /></label>
+          <label>Observed Pot (optional)<input type="number" id="observedPotInput" min="0" step="0.5" placeholder="Uses logged pot" /></label>
+        </div>
+        <button type="button" id="saveCardsButton">Save Hand Context</button>
+        <p class="subtle" id="visionStatusText">Local camera has not been checked.</p>
+      </section>
+
+      <section class="panel" id="seatSetup">
+        <div class="panel-head"><h2>Seat Setup</h2><button type="button" class="ghost-button" id="addSeatButton">Add Seat</button></div>
+        <div class="seat-editor" id="seatRows"></div>
+        <div class="inline-form compact">
+          <label>Small Blind<input type="number" id="smallBlindInput" min="0" step="0.5" value="1" /></label>
+          <label>Big Blind<input type="number" id="bigBlindInput" min="0" step="0.5" value="2" /></label>
+          <label>Dealer Seat<input type="number" id="dealerSeatInput" min="1" step="1" value="1" /></label>
+        </div>
+        <button type="button" id="saveSeatsButton">Save Seats</button>
+        <p class="subtle">Enter stacks at the start of this hand. Logged bets reduce the stacks used for analysis.</p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2>Displayed Player Stats</h2><span class="subtle">One-time fallback while vision is being connected.</span></div>
+        <div class="inline-form">
+          <label>Player<select id="observedStatsPlayer"></select></label>
+          <label>Hands Shown<input type="number" id="observedHandsInput" min="0" step="1" placeholder="e.g. 240" /></label>
+          <label>VPIP %<input type="number" id="observedVpipInput" min="0" max="100" step="0.1" placeholder="e.g. 34" /></label>
+          <label>PFR %<input type="number" id="observedPfrInput" min="0" max="100" step="0.1" placeholder="e.g. 18" /></label>
+          <label>AF<input type="number" id="observedAfInput" min="0" max="100" step="0.1" placeholder="e.g. 2.1" /></label>
+        </div>
+        <button type="button" id="saveObservedStatsButton">Save Displayed Stats</button>
+        <p class="subtle">These are stored as a ClubGG profile baseline, separate from hands the coach records locally.</p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2>Action Capture</h2></div>
+        <form id="actionForm" class="stacked-form">
+          <div class="inline-form">
+            <label>Player<select id="actionPlayer"></select></label>
+            <label>Action<select id="actionType"><option value="raise">Raise</option><option value="call">Call</option><option value="fold">Fold</option><option value="check">Check</option><option value="bet">Bet</option><option value="all_in">All In</option></select></label>
+            <label>Street<select id="streetInput"><option value="preflop">Preflop</option><option value="flop">Flop</option><option value="turn">Turn</option><option value="river">River</option><option value="showdown">Showdown</option></select></label>
+          </div>
+          <div class="inline-form compact">
+            <label>Amount<input type="number" id="actionAmount" min="0" step="0.5" placeholder="Optional" /></label>
+            <label>Amount Type<select id="amountType"><option value="unknown">Unknown</option><option value="total">Total</option><option value="additional">Additional</option></select></label>
+          </div>
+          <button type="submit">Log Action</button>
+        </form>
+        <form id="speechForm" class="stacked-form transcript-form"><label>Transcript<input type="text" id="transcriptInput" placeholder='Example: "Alex raises to 10"' /></label><button type="submit" class="ghost-button">Parse Transcript</button></form>
+        <div class="button-row">
+          <button type="button" class="ghost-button" data-correction="wrong_player">Wrong Player</button><button type="button" class="ghost-button" data-correction="wrong_amount">Wrong Amount</button><button type="button" class="ghost-button" data-correction="wrong_action">Wrong Action</button><button type="button" class="ghost-button" data-correction="undo">Undo</button><button type="button" id="endHandButton">End Hand</button>
+        </div>
+      </section>
+
+      <section class="panel"><div class="panel-head"><h2>Seats & Stacks</h2></div><div class="seat-list" id="seatsList"></div></section>
+      <section class="panel"><div class="panel-head"><h2>Opponent Memory</h2><span class="subtle">Usernames persist; stats shown are for the selected game only. Click for stage history.</span></div><div class="profiles-grid" id="profilesList"></div><div id="profileDetail" class="profile-detail subtle">Select a player to inspect game-specific history.</div></section>
+      <section class="panel"><div class="panel-head"><h2>Action Log</h2></div><div class="action-log" id="actionLog"></div></section>
+    </main>
+  </body>
+</html>

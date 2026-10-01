@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Poker Coach · Play review</title>
+  <link rel="stylesheet" href="/static/play.css">
+  <script defer src="/static/play.js"></script>
+</head>
+<body>
+  <header><a href="/">♠ Poker Coach</a><span>Local play review</span></header>
+  <main>
+    <section class="intro"><h1>Review recorded plays</h1><p>This is the after-game review page. <a href="/">Open the live coach</a> to share your game window and chat. Video and sampled frames stay on this computer in <code>data/play/</code>. After the game, verify cards on frames below. Only your verified labels are eligible for reader calibration; action notes are saved for review, not yet learned by an action model.</p></section>
+    <div class="layout">
+      <aside class="panel"><div class="row"><h2>Sessions</h2><button id="refreshSessions">Refresh</button></div><div id="sessions" class="sessions"></div></aside>
+      <section class="panel details">
+        <div class="row"><h2 id="sessionTitle">Select a session</h2><span id="sessionMeta"></span></div>
+        <video id="recordedVideo" controls hidden></video>
+        <div class="row frame-row"><label for="frameSelect">Sampled frame</label><select id="frameSelect" disabled><option>Choose a recording</option></select><button id="previousFrame" disabled>←</button><button id="nextFrame" disabled>→</button></div>
+        <img id="frameImage" alt="Selected captured game frame" hidden>
+        <p id="prediction" class="hint">The reader's guesses are suggestions, not labels.</p>
+        <form id="labelForm">
+          <div class="fields"><label>Hero cards <input id="heroCards" placeholder="9D 7S" autocomplete="off"></label><label>Board cards <input id="boardCards" placeholder="TS 7D 3C" autocomplete="off"></label></div>
+          <label>What happened (optional; saved as a note, not used to train cards)<textarea id="actionSummary" rows="2" placeholder="Alex raised to 10; FantaMJ called"></textarea></label>
+          <label class="verify"><input id="verified" type="checkbox"> I checked this image and these cards are correct</label>
+          <div class="row"><button type="submit" class="primary">Save verified label</button><span id="labelStatus"></span></div>
+        </form>
+        <div class="training"><h2>Improve the card reader</h2><p>After reviewing at least 12 distinct frames, test a new suit-shape calibration against held-out reviewed frames. It activates only if the test improves without new errors. This does not train betting-action recognition.</p><button id="trainButton">Train from verified frames</button><pre id="trainingReport"></pre></div>
+        <div class="events"><h2>Confirmed play events</h2><div id="eventList" class="hint">Select a session.</div></div>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

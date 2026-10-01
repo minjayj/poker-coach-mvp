@@ -1,0 +1,249 @@
+/* Match the live coach's charcoal, rose, and violet palette. */
+:root {
+  --bg: #09090c;
+  --bg-strong: #121117;
+  --panel: #141318;
+  --ink: #f3f3f6;
+  --muted: #a9a6b1;
+  --accent: #ee86ba;
+  --accent-soft: #30223a;
+  --line: #302d36;
+  --danger: #ff8e99;
+  color-scheme: dark;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+body {
+  color: var(--ink);
+  background:
+    radial-gradient(ellipse at 3% 0%, rgba(170, 91, 194, 0.13), transparent 33%),
+    radial-gradient(ellipse at 96% 0%, rgba(230, 89, 135, 0.09), transparent 30%),
+    var(--bg);
+  scrollbar-color: #48434f transparent;
+}
+
+.app-shell {
+  width: min(1160px, calc(100% - 1.5rem));
+}
+
+.masthead,
+.panel,
+.summary-card,
+.seat-card,
+.profile-card,
+.log-item {
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.2);
+}
+
+.masthead {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(125deg, #18131c, #14141a 58%, #201621);
+  border-color: #382b3a;
+  border-radius: 20px;
+}
+
+.masthead::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: linear-gradient(90deg, #ffc474, #ed537c 54%, #915bff);
+}
+
+.masthead h1 {
+  letter-spacing: -0.05em;
+}
+
+.summary-card,
+.panel,
+.seat-card,
+.profile-card,
+.log-item {
+  background: var(--panel);
+  border-color: var(--line);
+  border-radius: 18px;
+}
+
+.summary-card {
+  background: linear-gradient(145deg, #1b1921, #141318);
+}
+
+.summary-card strong {
+  color: #fff6fc;
+  letter-spacing: -0.04em;
+}
+
+.eyebrow,
+.label,
+.subtle,
+label,
+.coach-section ul {
+  color: var(--muted);
+}
+
+.eyebrow,
+.label {
+  font-weight: 700;
+}
+
+.status-pill,
+.signal {
+  background: #35243d;
+  color: #f0a8d2;
+  border: 1px solid #533755;
+}
+
+button {
+  border-radius: 11px;
+  background: linear-gradient(105deg, #ed658f, #a278e8);
+  color: #1b1020;
+  font-weight: 750;
+}
+
+button:hover {
+  filter: brightness(1.08);
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #c681e3;
+  outline-offset: 2px;
+}
+
+.ghost-button,
+.live-return {
+  border: 1px solid #45404b;
+  background: #24212b;
+  color: #eae6ec;
+}
+
+.live-return:hover {
+  border-color: #a76caa;
+  color: white;
+}
+
+input,
+select {
+  background: #1e1c24;
+  border-color: #3c3844;
+  border-radius: 11px;
+  color: var(--ink);
+}
+
+input::placeholder {
+  color: #77737e;
+}
+
+input:focus,
+select:focus {
+  border-color: #b578bc;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: #d579c5;
+}
+
+option {
+  background: #1e1c24;
+  color: var(--ink);
+}
+
+.study-result {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #1c1a22;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.seat-row {
+  background: #1c1a22;
+  border: 1px solid #302d37;
+  border-radius: 14px;
+}
+
+.video-stage,
+.video-stage video,
+.video-stage img {
+  background: #0b0b0f;
+  border-color: #34303b;
+}
+
+.video-empty {
+  color: #aaa5b2;
+}
+
+.coach-panel {
+  background: linear-gradient(160deg, #1a1720, #15141b);
+}
+
+.coach-headline {
+  color: #f9e4f3;
+}
+
+.coach-rep {
+  color: #e8a3d2;
+}
+
+button.profile-card {
+  background: #1b1921;
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+button.profile-card:hover {
+  border-color: #ab6cb5;
+}
+
+.embedded-setup body {
+  background: #101014;
+}
+
+@media (max-width: 860px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.7rem;
+  }
+
+  .summary-card {
+    padding: 0.95rem;
+  }
+
+  .advanced-header-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .status-pill {
+    align-self: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .masthead {
+    padding: 1.15rem;
+  }
+
+  .masthead h1 {
+    font-size: 2.15rem;
+  }
+
+  .advanced-header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .live-return,
+  .status-pill {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.83rem;
+  }
+}

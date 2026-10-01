@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#09090c">
+  <title>Poker Coach · Live</title>
+  <link rel="stylesheet" href="/static/focus.css">
+  <link rel="stylesheet" href="/static/focus-layout.css?v=live-feed-4">
+  <style>.voice-button{border:1px solid #393540;border-radius:8px;background:#242129;color:#bdb8c4;padding:6px 8px;font-size:11px}.voice-button.enabled{color:#f4cee9;border-color:#a96dab}</style>
+  <script defer src="/static/focus.js?v=table-read-6"></script>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><div class="brand-mark">♠</div><div><strong>Poker Coach</strong><span>Live table · local session</span></div></div>
+      <div class="top-actions"><span id="connection" class="connection">Connecting</span><button id="setupToggle" class="setup-toggle" type="button" aria-expanded="false" aria-controls="setupOverlay">Setup <span aria-hidden="true">⌄</span></button></div>
+    </header>
+    <main class="workspace">
+      <section class="table-pane" aria-label="Shared table">
+        <div class="pane-top"><div><span class="eyebrow">YOUR TABLE</span><h1>Stay in the hand.</h1></div><div id="liveBadge" class="live-badge">Not sharing</div></div>
+        <div class="video-frame">
+          <video id="tableVideo" autoplay muted playsinline hidden></video>
+          <div id="videoPlaceholder" class="video-placeholder"><div class="placeholder-icon">▣</div><strong>Your game appears here</strong><p>Share the ClubGG window, or your display if window capture freezes. Keep one table visible.</p></div>
+          <canvas id="captureCanvas" hidden></canvas>
+        </div>
+        <div class="table-controls"><button id="shareButton" class="primary">Share table or display</button><button id="stopButton" class="secondary" hidden>Stop sharing</button><button id="recordButton" class="secondary" hidden>Start local recording</button><a class="review-link" href="/play" target="_blank" rel="noopener">Review plays</a><span id="captureNote" class="capture-note">Local capture · no game controls</span></div>
+        <div class="context-strip"><span id="variantChip">NLH</span><span id="formatChip">Cash</span><span id="handChip">Hand —</span><span id="knownChip">Waiting for table details</span></div>
+      </section>
+      <section class="chat-pane" aria-label="Coach conversation">
+        <div class="chat-header"><div class="avatar">♠</div><div class="chat-title"><strong>Coach</strong><small id="coachStatus">Ready to think through a spot</small></div><button id="voiceButton" class="voice-button" type="button" aria-label="Turn coach voice on" title="Read coach replies aloud">Voice off</button><span class="presence" aria-label="Active"></span></div>
+        <div id="messages" class="messages" role="log" aria-live="polite"></div>
+        <div class="chat-bottom">
+          <form id="azureForm" class="azure-connect" hidden autocomplete="off">
+            <label for="azureKey">Connect your Azure coach</label>
+            <div><input id="azureKey" type="password" placeholder="Azure API key" autocomplete="off" required minlength="20" maxlength="512"><button id="azureButton" type="submit">Connect</button></div>
+            <small id="azureHint">The key stays in this server's memory until it restarts; it is not saved in the browser or project.</small>
+          </form>
+          <div class="format-controls" aria-label="Game selection">
+            <div class="segmented" role="group" aria-label="Poker variant"><button data-variant="nlh" class="selected">Hold'em</button><button data-variant="plo5">PLO5</button></div>
+            <div class="segmented" role="group" aria-label="Game format"><button data-format="cash" class="selected">Cash</button><button data-format="tournament">Tournament</button></div>
+          </div>
+          <form id="chatForm" class="composer"><label for="chatInput" class="sr-only">Message coach</label><textarea id="chatInput" rows="1" placeholder="Ask about the hand, or tell me what you see…" maxlength="1000"></textarea><button id="sendButton" type="submit" aria-label="Send message">➤</button></form>
+          <p class="composer-hint">Example: “I have Ah Kh, board Qs Jd 3c, pot 24, to call 6. Alex raised. What do you think?”</p>
+          <p id="privacyNote" class="composer-hint">Cloud conversation is off until an Azure key is configured. Poker decisions remain with the local engine.</p>
+        </div>
+      </section>
+    </main>
+    <footer>For consent-based games · Estimates, not guaranteed outcomes · You make the action</footer>
+  </div>
+  <div id="setupOverlay" class="setup-overlay" hidden>
+    <section class="setup-dialog" role="dialog" aria-modal="true" aria-labelledby="setupTitle">
+      <header class="setup-dialog-header"><div><strong id="setupTitle">Session setup &amp; review</strong><span>Manage seats, player history, and hand details without leaving the live view.</span></div><div class="setup-dialog-actions"><a href="/play" target="_blank" rel="noopener">Review plays ↗</a><a href="/advanced">Open full page ↗</a><button id="setupClose" type="button" aria-label="Close setup">✕</button></div></header>
+      <iframe id="setupFrame" title="Session setup and review" data-src="/advanced?embed=1#seatSetup"></iframe>
+    </section>
+  </div>
+</body>
+</html>
